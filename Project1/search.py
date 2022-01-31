@@ -11,6 +11,9 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
+# Project 1
+# February 7, 2022
+# Authors: Khris Thammavong and Ervin Chhour
 
 """
 In search.py, you will implement generic search algorithms which are called by
@@ -82,12 +85,50 @@ def depthFirstSearch(problem):
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
 
+    """
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    actionList = list()
+    stack = []
+    seenSet = set()
+    startState = problem.getStartState()
+    stack.append(startState)
+    # dfsRecursive(problem, startState, None, seenSet, actionList)
+    while not stack.count == 0:
+        node = stack.pop()
+        # print("Current node: " + node)
+        if problem.isGoalState(node):
+            # print("Found goal")
+            break
+        if not node in seenSet:
+            seenSet.add(node)
+            # actionList.append(node)
+            # print("Adding " + node + " to actionList, current list: ")
+            # print(actionList)
+            for successor in problem.getSuccessors(node):
+                stack.append(successor[0])
+            # actionList.remove(node)
+            # print("Removing " + node + " from actionList, current list: ")
+            # print(actionList)
+
+    return actionList
+
+# def dfsRecursive(problem, node, action, seenSet, actionList):
+#     seenSet.add(node)
+
+#     if not action is None:
+#         actionList.append(action)
+#     if problem.isGoalState(node):
+#         return
+#     for successor in problem.getSuccessors(node):
+#         dfsRecursive(problem, successor[0], successor[1], seenSet, actionList)    
+#     if not action is None:
+#         actionList.remove(action)
+
+
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
