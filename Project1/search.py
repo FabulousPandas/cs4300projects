@@ -93,24 +93,29 @@ def depthFirstSearch(problem):
     actionList = list()
     stack = util.Stack()
     seenSet = set()
+    parentMap = dict()
     startState = problem.getStartState()
+    goal = None
+
     stack.push(startState)
-    while not stack.count == 0:
+    while not stack.isEmpty():
         node = stack.pop()
-        # print("Current node: " + node)
         if problem.isGoalState(node):
-            # print("Found goal")
+            goal = node
             break
         if not node in seenSet:
             seenSet.add(node)
-            # actionList.append(node)
-            # print("Adding " + node + " to actionList, current list: ")
-            # print(actionList)
             for successor in problem.getSuccessors(node):
                 stack.push(successor[0])
-            # actionList.remove(node)
-            # print("Removing " + node + " from actionList, current list: ")
-            # print(actionList)
+                parentMap[successor[0]] = (node, successor[1])
+
+    node = goal
+    while not node == None and node in parentMap:
+        actionList.append(parentMap[node][1])
+        node = parentMap[node][0]
+
+    actionList.reverse() 
+
 
     return actionList
 
