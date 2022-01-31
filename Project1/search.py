@@ -86,47 +86,33 @@ def depthFirstSearch(problem):
     understand the search problem that is being passed in:
 
     """
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    # print("Start:", problem.getStartState())
+    # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
 
     actionList = list()
     stack = util.Stack()
     seenSet = set()
     startState = problem.getStartState()
-    stack.append(startState)
-    dfsRecursive(problem, startState, None, seenSet, actionList)
-    # while not stack.count == 0:
-    #     node = stack.pop()
-    #     # print("Current node: " + node)
-    #     if problem.isGoalState(node):
-    #         # print("Found goal")
-    #         break
-    #     if not node in seenSet:
-    #         seenSet.add(node)
-    #         # actionList.append(node)
-    #         # print("Adding " + node + " to actionList, current list: ")
-    #         # print(actionList)
-    #         for successor in problem.getSuccessors(node):
-    #             stack.append(successor[0])
-    #         # actionList.remove(node)
-    #         # print("Removing " + node + " from actionList, current list: ")
-    #         # print(actionList)
+    stack.push(startState)
+    while not stack.count == 0:
+        node = stack.pop()
+        # print("Current node: " + node)
+        if problem.isGoalState(node):
+            # print("Found goal")
+            break
+        if not node in seenSet:
+            seenSet.add(node)
+            # actionList.append(node)
+            # print("Adding " + node + " to actionList, current list: ")
+            # print(actionList)
+            for successor in problem.getSuccessors(node):
+                stack.push(successor[0])
+            # actionList.remove(node)
+            # print("Removing " + node + " from actionList, current list: ")
+            # print(actionList)
 
     return actionList
-
-def dfsRecursive(problem, node, action, seenSet, actionList):
-    seenSet.add(node)
-
-    if not action is None:
-        actionList.append(action)
-    if problem.isGoalState(node):
-        return True
-    for successor in problem.getSuccessors(node):
-        if dfsRecursive(problem, successor[0], successor[1], seenSet, actionList): 
-            return True
-    if not action is None:
-        actionList.remove(action)
 
 
 
