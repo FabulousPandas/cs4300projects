@@ -86,9 +86,6 @@ def depthFirstSearch(problem):
     understand the search problem that is being passed in:
 
     """
-    # print("Start:", problem.getStartState())
-    # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
 
     actionList = list()
     stack = util.Stack()
@@ -107,7 +104,8 @@ def depthFirstSearch(problem):
             seenSet.add(node)
             for successor in problem.getSuccessors(node):
                 stack.push(successor[0])
-                parentMap[successor[0]] = (node, successor[1])
+                if successor[0] not in seenSet:
+                    parentMap[successor[0]] = (node, successor[1])
 
     node = goal
     while not node == None and node in parentMap:
@@ -115,8 +113,6 @@ def depthFirstSearch(problem):
         node = parentMap[node][0]
 
     actionList.reverse() 
-
-
     return actionList
 
 
