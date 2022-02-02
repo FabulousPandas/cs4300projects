@@ -82,61 +82,26 @@ Given the problem, the appropriate data structure, and a function corresponding 
 the function performs its corresponding search and returns a list of actions to the goal if it reaches it
 """
 def generalSearchAlgorithm(problem, dataStructure):
-    actionList = list()
     seenSet = set()
-    # parentMap = dict()
     startState = (problem.getStartState(), None, 0, [])
-    print(startState)
     goal = None
 
     dataStructure.push(startState)
     while not dataStructure.isEmpty():
         node = dataStructure.pop()
-        # print("node: " + str(node))
         if problem.isGoalState(node[0]):
             goal = node
             break
         if not node[0] in seenSet:
-            # print("dataStructure: " + str(dataStructure))
-            # print("node: " + str(node))
             seenSet.add(node[0])
             for successor in problem.getSuccessors(node[0]):
                 actionList = list(node[3])
                 actionList.append(successor[1])
                 newNode = (successor[0], successor[1], successor[2], actionList)
-                print("new node: " + str(newNode))
                 dataStructure.push(newNode)
     if not goal == None:
         return goal[3]
     return []
-
-# """
-# Update function for DFS
-# """
-# def dfsUpdate(node, dataStructure, successor, seenSet, parentMap):
-#     actionList = list(node[3])
-#     actionList.append(successor[1])
-#     newNode = (successor[0], successor[1], successor[2], actionList)
-#     dataStructure.push(newNode)
-
-# """
-# Update function for BFS
-# """
-# def bfsUpdate(node, dataStructure, successor, seenSet, parentMap):
-#     actionList = list(node[3])
-#     actionList.append(successor[1])
-#     newNode = (successor[0], successor[1], successor[2], actionList)
-#     dataStructure.push(newNode)
-# """
-# Update function for UCS
-# """
-# def ucsUpdate(node, dataStructure, successor, seenSet, parentMap):
-    
-#     actionList = list(node[3])
-#     actionList.append(successor[1])
-#     newNode = (successor[0], successor[1], successor[2], actionList)
-#     dataStructure.push(newNode)
-
 
 def depthFirstSearch(problem):
     """
@@ -149,7 +114,6 @@ def depthFirstSearch(problem):
     understand the search problem that is being passed in:
 
     """
-
     stack = util.Stack()
     return generalSearchAlgorithm(problem, stack)
 
@@ -172,13 +136,7 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    def test(item):
-        print("cost gives: " + str(problem.getCostOfActions(item[3])))
-        print("heuristic gives: " + str(heuristic(problem, item[0]))) 
-        return problem.getCostOfActions(item[3]) + heuristic(problem, item[0])
-    pq = util.PriorityQueueWithFunction(test)
-
+    pq = util.PriorityQueueWithFunction(lambda item : problem.getCostOfActions(item[3]) + heuristic(item[0], problem))
     return generalSearchAlgorithm(problem, pq)
 
 
