@@ -81,12 +81,12 @@ def tinyMazeSearch(problem):
 Given the problem, the appropriate data structure, and a function corresponding to the algorithm
 the function performs its corresponding search and returns a list of actions to the goal if it reaches it
 """
-def generalSearchAlgorithm(problem, dataStructure, updateDataStructure):
+def generalSearchAlgorithm(problem, dataStructure):
     actionList = list()
     seenSet = set()
-    parentMap = dict()
-    startState = (problem.getStartState(), None, 0)
-    # print(startState)
+    # parentMap = dict()
+    startState = (problem.getStartState(), None, 0, [])
+    print(startState)
     goal = None
 
     dataStructure.push(startState)
@@ -101,50 +101,42 @@ def generalSearchAlgorithm(problem, dataStructure, updateDataStructure):
             # print("node: " + str(node))
             seenSet.add(node[0])
             for successor in problem.getSuccessors(node[0]):
-                updateDataStructure(node, dataStructure, successor, seenSet, parentMap)
+                actionList = list(node[3])
+                actionList.append(successor[1])
+                newNode = (successor[0], successor[1], successor[2], actionList)
+                print("new node: " + str(newNode))
+                dataStructure.push(newNode)
+    if not goal == None:
+        return goal[3]
+    return []
 
-    node = goal
-    # print("goal: " + str(node))
-    # print("")
-    # print(parentMap)
-    # print("")
-    # print("first argument: " + str(not node == None) + " second argument: " + str(node[0] in parentMap))
-    while not node == None and not node[0] == startState[0]:
-        # print("adding to actionList, node = " + str(node) )
-        actionList.append(parentMap[node[0]][1])
-        node = parentMap[node[0]][0]
-    actionList.reverse() 
-    # print(actionList)
-    return actionList
+# """
+# Update function for DFS
+# """
+# def dfsUpdate(node, dataStructure, successor, seenSet, parentMap):
+#     actionList = list(node[3])
+#     actionList.append(successor[1])
+#     newNode = (successor[0], successor[1], successor[2], actionList)
+#     dataStructure.push(newNode)
 
-"""
-Update function for DFS
-"""
-def dfsUpdate(node, dataStructure, successor, seenSet, parentMap):
-    dataStructure.push(successor)
-    if successor[0] not in seenSet:
-        parentMap[successor[0]] = (node, successor[1])
+# """
+# Update function for BFS
+# """
+# def bfsUpdate(node, dataStructure, successor, seenSet, parentMap):
+#     actionList = list(node[3])
+#     actionList.append(successor[1])
+#     newNode = (successor[0], successor[1], successor[2], actionList)
+#     dataStructure.push(newNode)
+# """
+# Update function for UCS
+# """
+# def ucsUpdate(node, dataStructure, successor, seenSet, parentMap):
+    
+#     actionList = list(node[3])
+#     actionList.append(successor[1])
+#     newNode = (successor[0], successor[1], successor[2], actionList)
+#     dataStructure.push(newNode)
 
-"""
-Update function for BFS
-"""
-def bfsUpdate(node, dataStructure, successor, seenSet, parentMap):
-    dataStructure.push(successor)
-    if successor[0] not in seenSet and successor[0] not in parentMap:
-        parentMap[successor[0]] = (node, successor[1])
-"""
-Update function for UCS
-"""
-def ucsUpdate(node, dataStructure, successor, seenSet, parentMap):
-    dataStructure.push(successor)
-    # print("in update: successor = " + str(successor))
-    if(successor[0] not in parentMap):
-        parentMap[successor[0]] = (node, successor[1], successor[2])
-    elif (successor[2] < parentMap[successor[0]][2]):
-        parentMap[successor[0]] = (node, successor[1], successor[2])
-
-def getCostFromItem(item):
-    return item[2]
 
 def depthFirstSearch(problem):
     """
@@ -159,18 +151,17 @@ def depthFirstSearch(problem):
     """
 
     stack = util.Stack()
-    return generalSearchAlgorithm(problem, stack, dfsUpdate)
+    return generalSearchAlgorithm(problem, stack)
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     queue = util.Queue()
-    return generalSearchAlgorithm(problem, queue, bfsUpdate)
+    return generalSearchAlgorithm(problem, queue)
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    # return []
-    pq = util.PriorityQueueWithFunction(getCostFromItem)
-    return generalSearchAlgorithm(problem, pq, ucsUpdate)
+    pq = util.PriorityQueueWithFunction(lambda item: problem.getCostOfActions(item[3]))
+    return generalSearchAlgorithm(problem, pq)
 
 def nullHeuristic(state, problem=None):
     """
@@ -182,7 +173,13 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def test(item):
+        print("cost gives: " + str(problem.getCostOfActions(item[3])))
+        print("heuristic gives: " + str(heuristic(problem, item[0]))) 
+        return problem.getCostOfActions(item[3]) + heuristic(problem, item[0])
+    pq = util.PriorityQueueWithFunction(test)
+
+    return generalSearchAlgorithm(problem, pq)
 
 
 # Abbreviations
