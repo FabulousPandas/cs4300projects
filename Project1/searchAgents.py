@@ -34,12 +34,11 @@ description for details.
 Good luck and happy searching!
 """
 
-from itertools import combinations
 from search import breadthFirstSearch
 from game import Directions
 from game import Agent
 from game import Actions
-import util
+from util import PriorityQueueWithFunction
 import time
 import search
 
@@ -465,18 +464,10 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    # Gives us 3/4
     furthestFoodDist = 0
     if foodGrid.asList():
-        furthestFoodDist = max(abs(position[0] - food[0]) + abs(position[1] - food[1]) for food in foodGrid.asList())
+        furthestFoodDist = max(mazeDistance(position, food, problem.startingGameState) for food in foodGrid.asList())
     return furthestFoodDist
-
-
-    # return 0
-
-
-    
 
 
 class ClosestDotSearchAgent(SearchAgent):
