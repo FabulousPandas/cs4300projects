@@ -10,8 +10,12 @@
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
+# 
+# Project 2
+# March 21, 2022
+# Authors: Khris Thammavong and Ervin Chhour
 
-
+from turtle import distance
 from util import manhattanDistance
 from game import Directions
 import random, util
@@ -73,8 +77,42 @@ class ReflexAgent(Agent):
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
-        "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        # Incentivise winning and avoid losing
+        if successorGameState.isWin():
+            return float('inf')
+        if successorGameState.isLose():
+            return float('-inf')
+
+        # Score of next state
+        score = successorGameState.getScore()
+
+        # Separating scared ghosts and active ghosts since pacman should not avoid scared ghosts
+        scaredGhosts = []
+        activeGhosts = []
+        for index in range(len(newGhostStates)):
+            if newScaredTimes[index] > 0:
+                scaredGhosts.append(newGhostStates[index])
+            else:
+                activeGhosts.append(newGhostStates[index])
+        
+        # Distances to closest ghost and food
+        distToGhost = min((manhattanDistance(newPos, ghost.getPosition()) for ghost in activeGhosts), default=0)
+        distToFood = min((manhattanDistance(newPos, foodPos) for foodPos in newFood.asList()), default=0)
+
+        # We want a bigger distance to a ghost and a smaller distance to food
+        scaledGhostDist = -2 * (0 if distToGhost == 0 else (1/distToGhost)) 
+        scaledFoodDist = 0 if distToFood == 0 else 1/distToFood 
+
+        # Number of food
+        numFood = successorGameState.getNumFood()
+        scaledNumFood = -10 * (0 if numFood == 0 else (1/numFood)) 
+
+        # Incentivise capsules
+        newCapsules = successorGameState.getCapsules()
+        numCapsules = len(newCapsules)
+        scaledNumCapsules = -5 * 0 if numCapsules == 0 else 1/numCapsules
+
+        return score + scaledGhostDist + scaledFoodDist + scaledNumFood
 
 def scoreEvaluationFunction(currentGameState):
     """
