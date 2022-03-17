@@ -112,7 +112,7 @@ class ReflexAgent(Agent):
         numCapsules = len(newCapsules)
         scaledNumCapsules = -5 * 0 if numCapsules == 0 else 1/numCapsules
 
-        return score + scaledGhostDist + scaledFoodDist + scaledNumFood
+        return score + scaledGhostDist + scaledFoodDist + scaledNumFood + scaledNumCapsules
 
 def scoreEvaluationFunction(currentGameState):
     """
@@ -173,7 +173,43 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
+        # maybe create helper dispatch function for minimax
+        # return self.minimax(gameState)
         util.raiseNotDefined()
+    """
+    dispatch function for minimax
+    """
+    def minimax(self, state, currDepth, index):
+        # Terminal state returns the utility
+        if state.isWin() or state.isLose():
+            return state.getScore()
+        
+        # If depth is reached return evaluation function
+        if currDepth == self.depth:
+            return self.evaluationFunction(state)
+
+        # Choose between max (pacman) and min (each of the ghosts)
+        if index == 0:
+            return self.max_value(state, currDepth, index)
+        else:
+            if index < state.getNumAgents() - 1:
+                return self.min_value(state, currDepth, index)
+            else:
+                return self.max_value(state, currDepth+1, 0)
+        
+    def max_value(self, state, currDepth, index):
+        value = float('-inf')
+        for action in state.getLegalActions(index):
+            successorState = state.generateSuccessor(index, action) 
+            value = max(value, self.minimax(successorState, currDepth, index+1))
+        return value
+
+    def min_value(self, state, currDepth, index):
+        value = float('inf')
+        for action in state.getLegalActions(index):
+            successorState = state.generateSuccessor(index, action)
+            value = min(value, self.minimax(successorState, currDepth, index+1))
+        return value
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
