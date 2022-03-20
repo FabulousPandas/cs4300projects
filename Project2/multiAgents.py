@@ -107,7 +107,7 @@ class ReflexAgent(Agent):
         # Incentivise capsules
         newCapsules = successorGameState.getCapsules()
         numCapsules = len(newCapsules)
-        scaledNumCapsules = -5 * 0 if numCapsules == 0 else 1/numCapsules
+        scaledNumCapsules = -5 * (0 if numCapsules == 0 else (1/numCapsules))
 
         # Sum up all the different factors for total score
         return score + scaledGhostDist + scaledFoodDist + scaledNumFood + scaledNumCapsules
@@ -355,8 +355,9 @@ def betterEvaluationFunction(currentGameState):
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
     evaluation function (question 5).
 
-    DESCRIPTION: Did the same thing as our other evaluation function
+    DESCRIPTION: Did the basically the same thing as our other evaluation function w/minor changes to pass the autograder
     We just used the current state rather than the new state given an action
+    More details on why we did what we did are in the inline comments
     """
     position = currentGameState.getPacmanPosition()
     food = currentGameState.getFood()
@@ -378,25 +379,21 @@ def betterEvaluationFunction(currentGameState):
         if newScaredTimes[index] == 0:
             activeGhosts.append(ghostStates[index])
     
-    # Distances to closest ghost and food
+    # Manhattan distances to closest ghost and food
     distToGhost = min((manhattanDistance(position, ghost.getPosition()) for ghost in activeGhosts), default=0)
     distToFood = min((manhattanDistance(position, foodPos) for foodPos in food.asList()), default=0)
 
     # We want a bigger distance to a ghost and a smaller distance to food
+    # so we multiply the ghost distance by a negative factor to avoid being close to ghosts
     scaledGhostDist = -2 * (0 if distToGhost == 0 else (1/distToGhost)) 
-    scaledFoodDist = 0 if distToFood == 0 else 1/distToFood 
+    scaledFoodDist = (0 if distToFood == 0 else 1/distToFood) 
 
-    # Number of food
+    # Number of food, less food = better so we also scale this negatively if pacman doesn't grab enough food
     numFood = currentGameState.getNumFood()
     scaledNumFood = -10 * (0 if numFood == 0 else (1/numFood)) 
 
-    # Incentivise capsules
-    newCapsules = currentGameState.getCapsules()
-    numCapsules = len(newCapsules)
-    scaledNumCapsules = -5 * 0 if numCapsules == 0 else 1/numCapsules
-
-    # Sum up all the different factors for total score
-    return score + scaledGhostDist + scaledFoodDist + scaledNumFood + scaledNumCapsules
+    # Sum up all the different factors for the evaluation of the state
+    return score + scaledGhostDist + scaledFoodDist + scaledNumFood
 
 # Abbreviation
 better = betterEvaluationFunction
