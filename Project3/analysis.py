@@ -11,6 +11,9 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
+# Project 3 
+# April 11, 2022
+# Authors: Khris Thammavong and Ervin Chhour
 
 ######################
 # ANALYSIS QUESTIONS #
