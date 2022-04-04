@@ -65,7 +65,6 @@ class ValueIterationAgent(ValueEstimationAgent):
     def runValueIteration(self):
         # Write value iteration code here
 
-        # print("old values: " + str(self.values))
         states = self.mdp.getStates() 
         for i in range(self.iterations):
             newValues = util.Counter()
@@ -79,11 +78,8 @@ class ValueIterationAgent(ValueEstimationAgent):
                     for transition in transitions:
                         newState = transition[0]
                         newValue += transition[1] * (self.mdp.getReward(state, action, newState) + self.discount * self.getValue(newState))
-                    # print("old value for " + str(state) +  ": " + str(newValues[state]))
                     newValues[state] = max(newValues[state], newValue)
-                    # print("new value for " + str(state) +  ": " + str(newValues[state]))
             self.values = newValues
-        # print("new values: " + str(self.values))
         
                 
 
